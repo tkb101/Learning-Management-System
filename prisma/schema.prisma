@@ -1,0 +1,144 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Student specific fields
+  interests String[] // Array of interests
+  skills    String[] // Array of skills
+
+  // Relations
+  createdPaths     LearningPath[] @relation("PathCreator")
+  enrollments      Enrollment[]
+  analytics        UserAnalytics[]
+  engagementLogs   EngagementLog[]
+
+  @@map("users")
+}
+
+model LearningPath {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  skillLevel  SkillLevel @default(BEGINNER)
+  interests   String[]   // Target interests
+  skills      String[]   // Skills covered
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  creatorId    String
+  creator      User         @relation("PathCreator", fields: [creatorId], references: [id])
+  enrollments  Enrollment[]
+  modules      Module[]
+
+  @@map("learning_paths")
+}
+
+model Module {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+  content     String? // JSON content or markdown
+  order       Int
+  isActive    Boolean @default(true)
+
+  // Relations
+  pathId      String
+  path        LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  completions ModuleCompletion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("modules")
+}
+
+model Enrollment {
+  id           String    @id @default(cuid())
+  enrolledAt   DateTime  @default(now())
+  completedAt  DateTime?
+  progress     Float     @default(0) // 0-100 percentage
+  isActive     Boolean   @default(true)
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  pathId String
+  path   LearningPath @relation(fields: [pathId], references: [id])
+
+  @@unique([userId, pathId])
+  @@map("enrollments")
+}
+
+model ModuleCompletion {
+  id          String   @id @default(cuid())
+  completedAt DateTime @default(now())
+  timeSpent   Int?     // in minutes
+
+  // Relations
+  userId   String
+  moduleId String
+  module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId])
+  @@map("module_completions")
+}
+
+model UserAnalytics {
+  id               String   @id @default(cuid())
+  date             DateTime @default(now())
+  totalTimeSpent   Int      @default(0) // in minutes
+  modulesCompleted Int      @default(0)
+  pathsCompleted   Int      @default(0)
+  loginCount       Int      @default(0)
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+  @@map("user_analytics")
+}
+
+model EngagementLog {
+  id        String   @id @default(cuid())
+  action    String   // LOGIN, MODULE_START, MODULE_COMPLETE, PATH_ENROLL, etc.
+  metadata  Json?    // Additional data about the action
+  timestamp DateTime @default(now())
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@map("engagement_logs")
+}

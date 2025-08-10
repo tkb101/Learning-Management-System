@@ -1,0 +1,50 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# VS Code
+.vscode/
+.history/
+
+# Environment files
+.env
+.env.*
+
+# Build output
+dist/
+build/
+out/
+coverage/
+
+# Misc
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# IDEs
+.idea/
+*.iml
+
+# Python (if applicable)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+#

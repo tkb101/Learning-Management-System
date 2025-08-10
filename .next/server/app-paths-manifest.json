@@ -1,0 +1,12 @@
+{
+  "/dashboard/page": "app/dashboard/page.js",
+  "/admin/users/add/page": "app/admin/users/add/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/learning-paths/page": "app/admin/learning-paths/page.js",
+  "/api/learning-paths/route": "app/api/learning-paths/route.js",
+  "/admin/learning-paths/add/page": "app/admin/learning-paths/add/page.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/auth/register/route": "app/api/auth/register/route.js",
+  "/login/page": "app/login/page.js",
+  "/register/page": "app/register/page.js"
+}

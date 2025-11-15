@@ -5,11 +5,11 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 yarn.lock
-
+.next/
 # Logs
 logs/
 *.log
-
+.next
 # OS generated files
 .DS_Store
 Thumbs.db

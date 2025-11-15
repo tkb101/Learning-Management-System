@@ -96,101 +96,135 @@ export default function DashboardPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
         
-        {/* Learning Paths */}
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          border: '1px solid #dee2e6',
-          borderRadius: '8px'
-        }}>
-          <h3>Learning Paths</h3>
-          <p>Browse and enroll in learning paths</p>
-          <button
-            onClick={() => window.open('/api/learning-paths', '_blank')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            View API
-          </button>
-        </div>
+        {/* Learning Paths - Show for students only */}
+        {user.role !== 'ADMIN' && (
+          <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            border: '1px solid #dee2e6',
+            borderRadius: '8px'
+          }}>
+            <h3>Learning Paths</h3>
+            <p>Browse and enroll in learning paths</p>
+            <button
+              onClick={() => router.push('/learning-paths-view')}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              View
+            </button>
+          </div>
+        )}
 
-        {/* Enrollments */}
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          border: '1px solid #dee2e6',
-          borderRadius: '8px'
-        }}>
-          <h3>My Enrollments</h3>
-          <p>Track your learning progress</p>
-          <button
-            onClick={() => window.open('/api/enrollments', '_blank')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            View API
-          </button>
-        </div>
+        {/* Enrollments - Show for students only */}
+        {user.role !== 'ADMIN' && (
+          <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            border: '1px solid #dee2e6',
+            borderRadius: '8px'
+          }}>
+            <h3>My Enrollments</h3>
+            <p>Track your learning progress</p>
+            <button
+              onClick={() => router.push('/enrollments-view')}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              View
+            </button>
+          </div>
+        )}
 
-        {/* Analytics */}
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          border: '1px solid #dee2e6',
-          borderRadius: '8px'
-        }}>
-          <h3>Analytics</h3>
-          <p>View your learning analytics</p>
-          <button
-            onClick={() => window.open('/api/analytics/user', '_blank')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#17a2b8',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            View API
-          </button>
-        </div>
+        {/* Analytics - Show for students only */}
+        {user.role !== 'ADMIN' && (
+          <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            border: '1px solid #dee2e6',
+            borderRadius: '8px'
+          }}>
+            <h3>Analytics</h3>
+            <p>View your learning analytics</p>
+            <button
+              onClick={() => router.push('/analytics-view')}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#17a2b8',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              View
+            </button>
+          </div>
+        )}
 
-        {/* Recommendations */}
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          border: '1px solid #dee2e6',
-          borderRadius: '8px'
-        }}>
-          <h3>Recommendations</h3>
-          <p>Get personalized learning suggestions</p>
-          <button
-            onClick={() => window.open('/api/recommendations', '_blank')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#ffc107',
-              color: 'black',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            View API
-          </button>
-        </div>
+        {/* Recommendations - Show for students only */}
+        {user.role !== 'ADMIN' && (
+          <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            border: '1px solid #dee2e6',
+            borderRadius: '8px'
+          }}>
+            <h3>Recommendations</h3>
+            <p>Get personalized learning suggestions</p>
+            <button
+              onClick={() => router.push('/recommendations-view')}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#ffc107',
+                color: 'black',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              View
+            </button>
+          </div>
+        )}
+
+        {/* Teacher Panel */}
+        {(user.role === 'TEACHER' || user.role === 'ADMIN') && (
+          <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            border: '1px solid #dee2e6',
+            borderRadius: '8px'
+          }}>
+            <h3>Teacher Dashboard</h3>
+            <p>Manage courses and students</p>
+            <button
+              onClick={() => router.push('/teacher')}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#6f42c1',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Teacher Panel
+            </button>
+          </div>
+        )}
 
         {/* Admin Panel */}
         {user.role === 'ADMIN' && (
@@ -201,7 +235,7 @@ export default function DashboardPage() {
             borderRadius: '8px'
           }}>
             <h3>Admin Panel</h3>
-            <p>Manage users and learning paths</p>
+            <p>Manage system and users</p>
             <button
               onClick={() => router.push('/admin')}
               style={{
@@ -217,35 +251,9 @@ export default function DashboardPage() {
             </button>
           </div>
         )}
-
-        {/* Admin/Teacher Only */}
-        {(user.role === 'ADMIN' || user.role === 'TEACHER') && (
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #dee2e6',
-            borderRadius: '8px'
-          }}>
-            <h3>System Analytics</h3>
-            <p>View system-wide analytics</p>
-            <button
-              onClick={() => window.open('/api/analytics/overview', '_blank')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#6f42c1',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              View API
-            </button>
-          </div>
-        )}
       </div>
 
-      <div style={{ marginTop: '40px' }}>
+      {/* <div style={{ marginTop: '40px' }}>
         <h3>API Testing</h3>
         <p>Use tools like Postman or curl to test the API endpoints. Remember to include the Authorization header:</p>
         <code style={{
@@ -257,7 +265,7 @@ export default function DashboardPage() {
         }}>
           Authorization: Bearer {localStorage.getItem('token')?.substring(0, 20)}...
         </code>
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -10,8 +10,16 @@ interface User {
   role: string
 }
 
+interface AdminStats {
+  totalUsers?: number
+  totalLearningPaths?: number
+  totalEnrollments?: number
+  activeUsers?: number
+}
+
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null)
+  const [stats, setStats] = useState<AdminStats | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -32,230 +40,250 @@ export default function AdminPage() {
         return
       }
       setUser(parsedUser)
+      fetchAdminStats()
     } catch (error) {
       router.push('/login')
+    }
+  }, [router])
+
+  const fetchAdminStats = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch('/api/analytics/overview', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await response.json()
+      setStats({
+        totalUsers: data.totalUsers || 0,
+        totalLearningPaths: data.totalLearningPaths || 0,
+        totalEnrollments: data.totalEnrollments || 0,
+        activeUsers: data.activeUsers || 0
+      })
+    } catch (error) {
+      console.error('Error fetching stats:', error)
     } finally {
       setLoading(false)
     }
-  }, [router])
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    router.push('/login')
+  }
 
   if (loading) return <div style={{ padding: '20px' }}>Loading...</div>
   if (!user) return <div style={{ padding: '20px' }}>Redirecting...</div>
 
   return (
-    <div style={{ 
+    <div style={{
       padding: '20px',
       fontFamily: 'Arial, sans-serif',
-      maxWidth: '1200px',
-      margin: '0 auto'
+      maxWidth: '1000px',
+      margin: '0 auto',
+      backgroundColor: '#f5f5f5',
+      minHeight: '100vh'
     }}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
         alignItems: 'center',
+        marginBottom: '30px',
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '8px'
+      }}>
+        <div>
+          <h1 style={{ marginTop: 0, marginBottom: '4px' }}>Admin Dashboard</h1>
+          <p style={{ color: '#888', margin: 0 }}>System Management</p>
+        </div>
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#dc3545',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Logout
+        </button>
+      </div>
+
+      {/* Stats Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '16px',
         marginBottom: '30px'
       }}>
-        <h1>Admin Panel</h1>
-        <div>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          border: '2px solid #e3f2fd'
+        }}>
+          <p style={{ color: '#888', margin: '0 0 8px 0', fontSize: '14px' }}>👥 Total Users</p>
+          <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#007bff', margin: 0 }}>
+            {stats?.totalUsers || 0}
+          </p>
+        </div>
+
+        <div style={{
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          border: '2px solid #f3e5f5'
+        }}>
+          <p style={{ color: '#888', margin: '0 0 8px 0', fontSize: '14px' }}>📚 Learning Paths</p>
+          <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#6f42c1', margin: 0 }}>
+            {stats?.totalLearningPaths || 0}
+          </p>
+        </div>
+
+        <div style={{
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          border: '2px solid #e8f5e9'
+        }}>
+          <p style={{ color: '#888', margin: '0 0 8px 0', fontSize: '14px' }}>🎓 Total Enrollments</p>
+          <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#28a745', margin: 0 }}>
+            {stats?.totalEnrollments || 0}
+          </p>
+        </div>
+
+        <div style={{
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          border: '2px solid #fff3e0'
+        }}>
+          <p style={{ color: '#888', margin: '0 0 8px 0', fontSize: '14px' }}>⚡ Active Users</p>
+          <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#ff9800', margin: 0 }}>
+            {stats?.activeUsers || 0}
+          </p>
+        </div>
+      </div>
+
+      {/* Management Sections */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '16px',
+        marginBottom: '30px'
+      }}>
+        {/* Users */}
+        <div style={{
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '8px',
+          border: '1px solid #dee2e6'
+        }}>
+          <h3 style={{ marginTop: 0, marginBottom: '12px' }}>👥 Users</h3>
+          <p style={{ color: '#666', margin: '0 0 16px 0', fontSize: '14px' }}>Manage system users and roles</p>
           <button
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push('/admin/users/add')}
             style={{
-              padding: '8px 16px',
-              backgroundColor: '#6c757d',
+              width: '100%',
+              padding: '10px',
+              backgroundColor: '#28a745',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              marginRight: '10px'
+              marginBottom: '8px',
+              fontWeight: 'bold'
             }}
           >
-            Dashboard
+            Add User
           </button>
           <button
-            onClick={() => {
-              localStorage.clear()
-              router.push('/login')
-            }}
+            onClick={() => router.push('/admin/users')}
             style={{
-              padding: '8px 16px',
-              backgroundColor: '#dc3545',
+              width: '100%',
+              padding: '10px',
+              backgroundColor: '#007bff',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              fontWeight: 'bold'
             }}
           >
-            Logout
+            Manage Users
           </button>
         </div>
-      </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-        
-        {/* User Management */}
+        {/* Learning Paths */}
         <div style={{
           backgroundColor: 'white',
           padding: '20px',
-          border: '1px solid #dee2e6',
           borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          border: '1px solid #dee2e6'
         }}>
-          <h3>👥 User Management</h3>
-          <p>Add, edit, and manage system users</p>
-          <div style={{ marginTop: '15px' }}>
-            <button
-              onClick={() => router.push('/admin/users/add')}
-              style={{
-                padding: '10px 15px',
-                backgroundColor: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginRight: '10px',
-                marginBottom: '10px'
-              }}
-            >
-              Add User
-            </button>
-            <button
-              onClick={() => router.push('/admin/users')}
-              style={{
-                padding: '10px 15px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginBottom: '10px'
-              }}
-            >
-              Manage Users
-            </button>
-          </div>
-        </div>
-
-        {/* Learning Path Management */}
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          border: '1px solid #dee2e6',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-        }}>
-          <h3>📚 Learning Paths</h3>
-          <p>Create and manage learning paths</p>
-          <div style={{ marginTop: '15px' }}>
-            <button
-              onClick={() => router.push('/admin/learning-paths/add')}
-              style={{
-                padding: '10px 15px',
-                backgroundColor: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginRight: '10px',
-                marginBottom: '10px'
-              }}
-            >
-              Create Path
-            </button>
-            <button
-              onClick={() => router.push('/admin/learning-paths')}
-              style={{
-                padding: '10px 15px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginBottom: '10px'
-              }}
-            >
-              Manage Paths
-            </button>
-          </div>
+          <h3 style={{ marginTop: 0, marginBottom: '12px' }}>� Learning Paths</h3>
+          <p style={{ color: '#666', margin: '0 0 16px 0', fontSize: '14px' }}>Create and manage courses</p>
+          <button
+            onClick={() => router.push('/admin/learning-paths/add')}
+            style={{
+              width: '100%',
+              padding: '10px',
+              backgroundColor: '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              marginBottom: '8px',
+              fontWeight: 'bold'
+            }}
+          >
+            Create Path
+          </button>
+          <button
+            onClick={() => router.push('/admin/learning-paths')}
+            style={{
+              width: '100%',
+              padding: '10px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            Manage Paths
+          </button>
         </div>
 
         {/* Analytics */}
         <div style={{
           backgroundColor: 'white',
           padding: '20px',
-          border: '1px solid #dee2e6',
           borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          border: '1px solid #dee2e6'
         }}>
-          <h3>📊 System Analytics</h3>
-          <p>View system-wide statistics</p>
-          <div style={{ marginTop: '15px' }}>
-            <button
-              onClick={() => router.push('/admin/analytics')}
-              style={{
-                padding: '10px 15px',
-                backgroundColor: '#17a2b8',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginBottom: '10px'
-              }}
-            >
-              View Analytics
-            </button>
-          </div>
-        </div>
-
-        {/* Enrollments */}
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          border: '1px solid #dee2e6',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-        }}>
-          <h3>🎓 Enrollments</h3>
-          <p>Manage user enrollments</p>
-          <div style={{ marginTop: '15px' }}>
-            <button
-              onClick={() => router.push('/admin/enrollments')}
-              style={{
-                padding: '10px 15px',
-                backgroundColor: '#ffc107',
-                color: 'black',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginBottom: '10px'
-              }}
-            >
-              View Enrollments
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ 
-        marginTop: '40px',
-        backgroundColor: '#f8f9fa',
-        padding: '20px',
-        borderRadius: '8px'
-      }}>
-        <h3>Quick Stats</h3>
-        <p>For detailed analytics, use the Analytics section above or API endpoints.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginTop: '15px' }}>
-          <div style={{ textAlign: 'center', padding: '10px', backgroundColor: 'white', borderRadius: '4px' }}>
-            <strong>Total Users</strong><br/>
-            <span style={{ fontSize: '24px', color: '#007bff' }}>API Call</span>
-          </div>
-          <div style={{ textAlign: 'center', padding: '10px', backgroundColor: 'white', borderRadius: '4px' }}>
-            <strong>Learning Paths</strong><br/>
-            <span style={{ fontSize: '24px', color: '#28a745' }}>API Call</span>
-          </div>
-          <div style={{ textAlign: 'center', padding: '10px', backgroundColor: 'white', borderRadius: '4px' }}>
-            <strong>Active Enrollments</strong><br/>
-            <span style={{ fontSize: '24px', color: '#ffc107' }}>API Call</span>
-          </div>
+          <h3 style={{ marginTop: 0, marginBottom: '12px' }}>� Analytics</h3>
+          <p style={{ color: '#666', margin: '0 0 16px 0', fontSize: '14px' }}>View system-wide insights</p>
+          <button
+            onClick={() => router.push('/admin/analytics')}
+            style={{
+              width: '100%',
+              padding: '10px',
+              backgroundColor: '#17a2b8',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            View Analytics
+          </button>
         </div>
       </div>
     </div>

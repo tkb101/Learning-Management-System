@@ -18,7 +18,6 @@ export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Check if user is logged in
     const token = localStorage.getItem('token')
     const userData = localStorage.getItem('user')
 
@@ -45,227 +44,476 @@ export default function DashboardPage() {
   }
 
   if (loading) {
-    return <div style={{ padding: '20px' }}>Loading...</div>
+    return (
+      <div style={{ 
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+      }}>
+        <div style={{ textAlign: 'center', color: 'white' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📚</div>
+          <div className="pulse" style={{ fontSize: '1.2rem' }}>Loading your dashboard...</div>
+        </div>
+      </div>
+    )
   }
 
   if (!user) {
-    return <div style={{ padding: '20px' }}>Redirecting to login...</div>
+    return null
   }
 
   return (
     <div style={{ 
-      padding: '20px',
-      fontFamily: 'Arial, sans-serif',
-      maxWidth: '800px',
-      margin: '0 auto'
+      minHeight: '100vh',
+      background: '#f7fafc',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
     }}>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
+      {/* Navigation Bar */}
+      <nav style={{
+        background: 'white',
+        borderBottom: '1px solid #e2e8f0',
+        padding: '1rem 5%',
+        display: 'flex',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '30px'
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000
       }}>
-        <h1>LMS Dashboard</h1>
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Logout
-        </button>
-      </div>
-
-      <div style={{
-        backgroundColor: '#f8f9fa',
-        padding: '20px',
-        borderRadius: '8px',
-        marginBottom: '30px'
-      }}>
-        <h2>Welcome, {user.name}!</h2>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Role:</strong> {user.role}</p>
-        <p><strong>Interests:</strong> {user.interests.join(', ') || 'None specified'}</p>
-        <p><strong>Skills:</strong> {user.skills.join(', ') || 'None specified'}</p>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-        
-        {/* Learning Paths - Show for students only */}
-        {user.role !== 'ADMIN' && (
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #dee2e6',
-            borderRadius: '8px'
-          }}>
-            <h3>Learning Paths</h3>
-            <p>Browse and enroll in learning paths</p>
-            <button
-              onClick={() => router.push('/learning-paths-view')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              View
-            </button>
-          </div>
-        )}
-
-        {/* Enrollments - Show for students only */}
-        {user.role !== 'ADMIN' && (
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #dee2e6',
-            borderRadius: '8px'
-          }}>
-            <h3>My Enrollments</h3>
-            <p>Track your learning progress</p>
-            <button
-              onClick={() => router.push('/enrollments-view')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              View
-            </button>
-          </div>
-        )}
-
-        {/* Analytics - Show for students only */}
-        {user.role !== 'ADMIN' && (
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #dee2e6',
-            borderRadius: '8px'
-          }}>
-            <h3>Analytics</h3>
-            <p>View your learning analytics</p>
-            <button
-              onClick={() => router.push('/analytics-view')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#17a2b8',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              View
-            </button>
-          </div>
-        )}
-
-        {/* Recommendations - Show for students only */}
-        {user.role !== 'ADMIN' && (
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #dee2e6',
-            borderRadius: '8px'
-          }}>
-            <h3>Recommendations</h3>
-            <p>Get personalized learning suggestions</p>
-            <button
-              onClick={() => router.push('/recommendations-view')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#ffc107',
-                color: 'black',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              View
-            </button>
-          </div>
-        )}
-
-        {/* Teacher Panel */}
-        {(user.role === 'TEACHER' || user.role === 'ADMIN') && (
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #dee2e6',
-            borderRadius: '8px'
-          }}>
-            <h3>Teacher Dashboard</h3>
-            <p>Manage courses and students</p>
-            <button
-              onClick={() => router.push('/teacher')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#6f42c1',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Teacher Panel
-            </button>
-          </div>
-        )}
-
-        {/* Admin Panel */}
-        {user.role === 'ADMIN' && (
-          <div style={{
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #dee2e6',
-            borderRadius: '8px'
-          }}>
-            <h3>Admin Panel</h3>
-            <p>Manage system and users</p>
-            <button
-              onClick={() => router.push('/admin')}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#dc3545',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              Admin Panel
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* <div style={{ marginTop: '40px' }}>
-        <h3>API Testing</h3>
-        <p>Use tools like Postman or curl to test the API endpoints. Remember to include the Authorization header:</p>
-        <code style={{
-          backgroundColor: '#f8f9fa',
-          padding: '10px',
-          display: 'block',
-          borderRadius: '4px',
-          marginTop: '10px'
+        <div style={{ 
+          fontSize: '1.5rem', 
+          fontWeight: 'bold',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
         }}>
-          Authorization: Bearer {localStorage.getItem('token')?.substring(0, 20)}...
-        </code>
-      </div> */}
+          <span style={{ 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            WebkitBackgroundClip: 'initial',
+            WebkitTextFillColor: 'initial'
+          }}>📚</span>
+          EduPlatform
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontWeight: '600', color: '#2d3748' }}>{user.name}</div>
+            <div style={{ fontSize: '0.85rem', color: '#718096' }}>
+              {user.role === 'ADMIN' ? '👑 Admin' : user.role === 'TEACHER' ? '👨‍🏫 Teacher' : '🎓 Student'}
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: '0.5rem 1.25rem',
+              background: '#fed7d7',
+              color: '#c53030',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              fontSize: '0.9rem',
+              transition: 'all 0.3s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#fc8181'
+              e.currentTarget.style.color = 'white'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#fed7d7'
+              e.currentTarget.style.color = '#c53030'
+            }}
+          >
+            🚪 Logout
+          </button>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <div style={{ padding: '2rem 5%', maxWidth: '1400px', margin: '0 auto' }}>
+        {/* Welcome Section */}
+        <div style={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          padding: '3rem',
+          borderRadius: '20px',
+          color: 'white',
+          marginBottom: '2rem',
+          boxShadow: '0 10px 40px rgba(102, 126, 234, 0.3)'
+        }}>
+          <h1 style={{ 
+            fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', 
+            fontWeight: '700',
+            marginBottom: '0.5rem'
+          }}>
+            Welcome back, {user.name}! 👋
+          </h1>
+          <p style={{ fontSize: '1.1rem', opacity: '0.95' }}>
+            Ready to continue your learning journey?
+          </p>
+          
+          <div style={{ 
+            display: 'flex', 
+            gap: '1rem', 
+            marginTop: '1.5rem',
+            flexWrap: 'wrap'
+          }}>
+            {user.interests.length > 0 && (
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(10px)',
+                padding: '0.5rem 1rem',
+                borderRadius: '20px',
+                fontSize: '0.9rem'
+              }}>
+                💡 {user.interests.slice(0, 3).join(', ')}
+              </div>
+            )}
+            {user.skills.length > 0 && (
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(10px)',
+                padding: '0.5rem 1rem',
+                borderRadius: '20px',
+                fontSize: '0.9rem'
+              }}>
+                ⚡ {user.skills.slice(0, 3).join(', ')}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Dashboard Cards */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '1.5rem'
+        }}>
+          
+          {user.role !== 'ADMIN' && (
+            <div style={{
+              background: 'white',
+              padding: '2rem',
+              borderRadius: '16px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              cursor: 'pointer',
+              border: '2px solid transparent'
+            }}
+            onClick={() => router.push('/learning-paths-view')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)'
+              e.currentTarget.style.boxShadow = '0 10px 40px rgba(102, 126, 234, 0.2)'
+              e.currentTarget.style.borderColor = '#667eea'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)'
+              e.currentTarget.style.borderColor = 'transparent'
+            }}>
+              <div style={{ 
+                fontSize: '3rem', 
+                marginBottom: '1rem',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                borderRadius: '12px',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                🎯
+              </div>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.75rem', color: '#2d3748' }}>
+                Learning Paths
+              </h3>
+              <p style={{ color: '#718096', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                Browse and enroll in personalized learning paths
+              </p>
+              <div style={{
+                padding: '0.75rem 1.5rem',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                borderRadius: '8px',
+                textAlign: 'center',
+                fontWeight: '600'
+              }}>
+                Explore Courses →
+              </div>
+            </div>
+          )}
+
+          {user.role === 'STUDENT' && (
+            <div style={{
+              background: 'white',
+              padding: '2rem',
+              borderRadius: '16px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              cursor: 'pointer',
+              border: '2px solid transparent'
+            }}
+            onClick={() => router.push('/enrollments-view')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)'
+              e.currentTarget.style.boxShadow = '0 10px 40px rgba(16, 185, 129, 0.2)'
+              e.currentTarget.style.borderColor = '#10b981'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)'
+              e.currentTarget.style.borderColor = 'transparent'
+            }}>
+              <div style={{ 
+                fontSize: '3rem', 
+                marginBottom: '1rem',
+                background: '#10b981',
+                borderRadius: '12px',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                📖
+              </div>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.75rem', color: '#2d3748' }}>
+                My Enrollments
+              </h3>
+              <p style={{ color: '#718096', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                Track your progress and continue learning
+              </p>
+              <div style={{
+                padding: '0.75rem 1.5rem',
+                background: '#10b981',
+                color: 'white',
+                borderRadius: '8px',
+                textAlign: 'center',
+                fontWeight: '600'
+              }}>
+                View Progress →
+              </div>
+            </div>
+          )}
+
+          {user.role !== 'ADMIN' && (
+            <div style={{
+              background: 'white',
+              padding: '2rem',
+              borderRadius: '16px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              cursor: 'pointer',
+              border: '2px solid transparent'
+            }}
+            onClick={() => router.push('/analytics-view')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)'
+              e.currentTarget.style.boxShadow = '0 10px 40px rgba(59, 130, 246, 0.2)'
+              e.currentTarget.style.borderColor = '#3b82f6'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)'
+              e.currentTarget.style.borderColor = 'transparent'
+            }}>
+              <div style={{ 
+                fontSize: '3rem', 
+                marginBottom: '1rem',
+                background: '#3b82f6',
+                borderRadius: '12px',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                📊
+              </div>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.75rem', color: '#2d3748' }}>
+                Analytics
+              </h3>
+              <p style={{ color: '#718096', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                View detailed insights and performance metrics
+              </p>
+              <div style={{
+                padding: '0.75rem 1.5rem',
+                background: '#3b82f6',
+                color: 'white',
+                borderRadius: '8px',
+                textAlign: 'center',
+                fontWeight: '600'
+              }}>
+                View Analytics →
+              </div>
+            </div>
+          )}
+
+          {user.role === 'STUDENT' && (
+            <div style={{
+              background: 'white',
+              padding: '2rem',
+              borderRadius: '16px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              cursor: 'pointer',
+              border: '2px solid transparent'
+            }}
+            onClick={() => router.push('/recommendations-view')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)'
+              e.currentTarget.style.boxShadow = '0 10px 40px rgba(245, 158, 11, 0.2)'
+              e.currentTarget.style.borderColor = '#f59e0b'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)'
+              e.currentTarget.style.borderColor = 'transparent'
+            }}>
+              <div style={{ 
+                fontSize: '3rem', 
+                marginBottom: '1rem',
+                background: '#f59e0b',
+                borderRadius: '12px',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                ✨
+              </div>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.75rem', color: '#2d3748' }}>
+                Recommendations
+              </h3>
+              <p style={{ color: '#718096', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                AI-powered personalized course suggestions
+              </p>
+              <div style={{
+                padding: '0.75rem 1.5rem',
+                background: '#f59e0b',
+                color: 'white',
+                borderRadius: '8px',
+                textAlign: 'center',
+                fontWeight: '600'
+              }}>
+                Get Suggestions →
+              </div>
+            </div>
+          )}
+
+          {(user.role === 'TEACHER' || user.role === 'ADMIN') && (
+            <div style={{
+              background: 'white',
+              padding: '2rem',
+              borderRadius: '16px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              cursor: 'pointer',
+              border: '2px solid transparent'
+            }}
+            onClick={() => router.push('/teacher')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)'
+              e.currentTarget.style.boxShadow = '0 10px 40px rgba(139, 92, 246, 0.2)'
+              e.currentTarget.style.borderColor = '#8b5cf6'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)'
+              e.currentTarget.style.borderColor = 'transparent'
+            }}>
+              <div style={{ 
+                fontSize: '3rem', 
+                marginBottom: '1rem',
+                background: '#8b5cf6',
+                borderRadius: '12px',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                👨‍🏫
+              </div>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.75rem', color: '#2d3748' }}>
+                Teacher Dashboard
+              </h3>
+              <p style={{ color: '#718096', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                Manage courses, students, and content
+              </p>
+              <div style={{
+                padding: '0.75rem 1.5rem',
+                background: '#8b5cf6',
+                color: 'white',
+                borderRadius: '8px',
+                textAlign: 'center',
+                fontWeight: '600'
+              }}>
+                Manage Content →
+              </div>
+            </div>
+          )}
+
+          {user.role === 'ADMIN' && (
+            <div style={{
+              background: 'white',
+              padding: '2rem',
+              borderRadius: '16px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              transition: 'transform 0.3s, box-shadow 0.3s',
+              cursor: 'pointer',
+              border: '2px solid transparent'
+            }}
+            onClick={() => router.push('/admin')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)'
+              e.currentTarget.style.boxShadow = '0 10px 40px rgba(239, 68, 68, 0.2)'
+              e.currentTarget.style.borderColor = '#ef4444'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)'
+              e.currentTarget.style.borderColor = 'transparent'
+            }}>
+              <div style={{ 
+                fontSize: '3rem', 
+                marginBottom: '1rem',
+                background: '#ef4444',
+                borderRadius: '12px',
+                width: '60px',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                👑
+              </div>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '0.75rem', color: '#2d3748' }}>
+                Admin Panel
+              </h3>
+              <p style={{ color: '#718096', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                Full system access and user management
+              </p>
+              <div style={{
+                padding: '0.75rem 1.5rem',
+                background: '#ef4444',
+                color: 'white',
+                borderRadius: '8px',
+                textAlign: 'center',
+                fontWeight: '600'
+              }}>
+                Manage System →
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

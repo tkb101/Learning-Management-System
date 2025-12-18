@@ -3,7 +3,8 @@ import { prisma } from '@/lib/db'
 import { requireAuth } from '@/lib/middleware'
 
 // POST /api/modules/[id]/complete - Mark module as completed
-export const POST = requireAuth(async (request: NextRequest, user: any, { params }: { params: { id: string } }) => {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+  return requireAuth(async (req: NextRequest, user: any) => {
   try {
     const { timeSpent } = await request.json()
 
@@ -194,4 +195,5 @@ export const POST = requireAuth(async (request: NextRequest, user: any, { params
       { status: 500 }
     )
   }
-})
+  })(request)
+}

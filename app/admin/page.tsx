@@ -112,7 +112,18 @@ export default function AdminPage() {
           Admin Dashboard
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ textAlign: 'right' }}>
+          <div 
+            onClick={() => router.push('/profile')}
+            style={{ 
+              textAlign: 'right',
+              cursor: 'pointer',
+              padding: '0.5rem',
+              borderRadius: '8px',
+              transition: 'background 0.3s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#f7fafc'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+          >
             <div style={{ fontWeight: '600', color: '#2d3748' }}>{user.name}</div>
             <div style={{ fontSize: '0.85rem', color: '#718096' }}>Administrator</div>
           </div>
@@ -437,197 +448,6 @@ export default function AdminPage() {
         >
           ← Back to Dashboard
         </button>
-      </div>
-    </div>
-  )
-}
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Logout
-        </button>
-      </div>
-
-      {/* Stats Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '16px',
-        marginBottom: '30px'
-      }}>
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          border: '2px solid #e3f2fd'
-        }}>
-          <p style={{ color: '#888', margin: '0 0 8px 0', fontSize: '14px' }}>👥 Total Users</p>
-          <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#007bff', margin: 0 }}>
-            {stats?.totalUsers || 0}
-          </p>
-        </div>
-
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          border: '2px solid #f3e5f5'
-        }}>
-          <p style={{ color: '#888', margin: '0 0 8px 0', fontSize: '14px' }}>📚 Learning Paths</p>
-          <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#6f42c1', margin: 0 }}>
-            {stats?.totalLearningPaths || 0}
-          </p>
-        </div>
-
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          border: '2px solid #e8f5e9'
-        }}>
-          <p style={{ color: '#888', margin: '0 0 8px 0', fontSize: '14px' }}>🎓 Total Enrollments</p>
-          <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#28a745', margin: 0 }}>
-            {stats?.totalEnrollments || 0}
-          </p>
-        </div>
-
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          border: '2px solid #fff3e0'
-        }}>
-          <p style={{ color: '#888', margin: '0 0 8px 0', fontSize: '14px' }}>⚡ Active Users</p>
-          <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#ff9800', margin: 0 }}>
-            {stats?.activeUsers || 0}
-          </p>
-        </div>
-      </div>
-
-      {/* Management Sections */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '16px',
-        marginBottom: '30px'
-      }}>
-        {/* Users */}
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          border: '1px solid #dee2e6'
-        }}>
-          <h3 style={{ marginTop: 0, marginBottom: '12px' }}>👥 Users</h3>
-          <p style={{ color: '#666', margin: '0 0 16px 0', fontSize: '14px' }}>Manage system users and roles</p>
-          <button
-            onClick={() => router.push('/admin/users/add')}
-            style={{
-              width: '100%',
-              padding: '10px',
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              marginBottom: '8px',
-              fontWeight: 'bold'
-            }}
-          >
-            Add User
-          </button>
-          <button
-            onClick={() => router.push('/admin/users')}
-            style={{
-              width: '100%',
-              padding: '10px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            Manage Users
-          </button>
-        </div>
-
-        {/* Learning Paths */}
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          border: '1px solid #dee2e6'
-        }}>
-          <h3 style={{ marginTop: 0, marginBottom: '12px' }}>� Learning Paths</h3>
-          <p style={{ color: '#666', margin: '0 0 16px 0', fontSize: '14px' }}>Create and manage courses</p>
-          <button
-            onClick={() => router.push('/admin/learning-paths/add')}
-            style={{
-              width: '100%',
-              padding: '10px',
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              marginBottom: '8px',
-              fontWeight: 'bold'
-            }}
-          >
-            Create Path
-          </button>
-          <button
-            onClick={() => router.push('/admin/learning-paths')}
-            style={{
-              width: '100%',
-              padding: '10px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            Manage Paths
-          </button>
-        </div>
-
-        {/* Analytics */}
-        <div style={{
-          backgroundColor: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          border: '1px solid #dee2e6'
-        }}>
-          <h3 style={{ marginTop: 0, marginBottom: '12px' }}>� Analytics</h3>
-          <p style={{ color: '#666', margin: '0 0 16px 0', fontSize: '14px' }}>View system-wide insights</p>
-          <button
-            onClick={() => router.push('/admin/analytics')}
-            style={{
-              width: '100%',
-              padding: '10px',
-              backgroundColor: '#17a2b8',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            View Analytics
-          </button>
-        </div>
       </div>
     </div>
   )

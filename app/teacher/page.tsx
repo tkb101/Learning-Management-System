@@ -126,7 +126,18 @@ export default function TeacherDashboard() {
           Teacher Portal
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ textAlign: 'right' }}>
+          <div 
+            onClick={() => router.push('/profile')}
+            style={{ 
+              textAlign: 'right',
+              cursor: 'pointer',
+              padding: '0.5rem',
+              borderRadius: '8px',
+              transition: 'background 0.3s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#f7fafc'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+          >
             <div style={{ fontWeight: '600', color: '#2d3748' }}>{user.name}</div>
             <div style={{ fontSize: '0.85rem', color: '#718096' }}>Educator</div>
           </div>

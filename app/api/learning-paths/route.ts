@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { requireAuth, requireRole } from '@/lib/middleware'
+import { sendNewCourseAnnouncement } from '@/lib/email'
 
 // GET /api/learning-paths - Get all learning paths (with optional filtering)
 export const GET = requireAuth(async (request: NextRequest, user: any) => {
@@ -131,6 +132,33 @@ export const POST = requireRole(['TEACHER', 'ADMIN'])(async (request: NextReques
         }
       }
     })
+
+    // Send email notification to all users about new course
+    try {
+      const allUsers = await prisma.user.findMany({
+        select: {
+          email: true,
+          name: true
+        }
+      })
+
+      const userEmails = allUsers.map(u => u.email)
+      
+      if (userEmails.length > 0) {
+        await sendNewCourseAnnouncement(userEmails, {
+          title: path.title,
+          description: path.description || undefined,
+          creatorName: path.creator.name,
+          skillLevel: path.skillLevel,
+          interests: path.interests,
+          skills: path.skills
+        })
+        console.log(`New course announcement sent to ${userEmails.length} users`)
+      }
+    } catch (emailError) {
+      console.error('Error sending course announcement emails:', emailError)
+      // Don't fail the request if emails fail
+    }
 
     return NextResponse.json({
       message: 'Learning path created successfully',

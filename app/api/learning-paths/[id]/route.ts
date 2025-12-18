@@ -3,7 +3,8 @@ import { prisma } from '@/lib/db'
 import { requireAuth, requireRole } from '@/lib/middleware'
 
 // GET /api/learning-paths/[id] - Get specific learning path
-export const GET = requireAuth(async (request: NextRequest, user: any, { params }: { params: { id: string } }) => {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  return requireAuth(async (req: NextRequest, user: any) => {
   try {
     const path = await prisma.learningPath.findUnique({
       where: {
@@ -64,10 +65,12 @@ export const GET = requireAuth(async (request: NextRequest, user: any, { params 
       { status: 500 }
     )
   }
-})
+  })(request)
+}
 
 // PUT /api/learning-paths/[id] - Update learning path (Creator/Admin only)
-export const PUT = requireAuth(async (request: NextRequest, user: any, { params }: { params: { id: string } }) => {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  return requireAuth(async (req: NextRequest, user: any) => {
   try {
     const { title, description, skillLevel, interests, skills, isActive } = await request.json()
 
@@ -128,10 +131,12 @@ export const PUT = requireAuth(async (request: NextRequest, user: any, { params 
       { status: 500 }
     )
   }
-})
+  })(request)
+}
 
 // DELETE /api/learning-paths/[id] - Delete learning path (Creator/Admin only)
-export const DELETE = requireAuth(async (request: NextRequest, user: any, { params }: { params: { id: string } }) => {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  return requireAuth(async (req: NextRequest, user: any) => {
   try {
     // Check if user can delete this path
     const existingPath = await prisma.learningPath.findUnique({
@@ -168,4 +173,5 @@ export const DELETE = requireAuth(async (request: NextRequest, user: any, { para
       { status: 500 }
     )
   }
-})
+  })(request)
+}

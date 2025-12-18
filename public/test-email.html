@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Test - LMS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+    }
+    
+    h1 {
+      color: #2d3748;
+      margin-bottom: 10px;
+      font-size: 2rem;
+    }
+    
+    .subtitle {
+      color: #718096;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+    
+    .status {
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+    
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 2px solid #6ee7b7;
+    }
+    
+    .status.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 2px solid #fca5a5;
+    }
+    
+    .status.info {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 2px solid #93c5fd;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #4a5568;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #8b5cf6;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+    }
+    
+    .btn:disabled {
+      background: #cbd5e0;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    }
+    
+    .config-info {
+      background: #f7fafc;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 30px;
+      border-left: 4px solid #8b5cf6;
+    }
+    
+    .config-info h3 {
+      color: #2d3748;
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+    
+    .config-info pre {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      color: #4a5568;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 3px solid #ffffff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📧 Email Test Center</h1>
+    <p class="subtitle">Test your email configuration for the Learning Management System</p>
+    
+    <div id="statusMessage" style="display: none;"></div>
+    
+    <div class="form-group">
+      <label for="emailType">Email Type</label>
+      <select id="emailType">
+        <option value="simple">Simple Test Email</option>
+        <option value="course-announcement">Course Announcement Email</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="emailTo">Recipient Email</label>
+      <input type="email" id="emailTo" placeholder="recipient@example.com" value="rameshtkb07@gmail.com">
+    </div>
+    
+    <button class="btn" onclick="sendTestEmail()" id="sendBtn">
+      📨 Send Test Email
+    </button>
+    
+    <button class="btn btn-secondary" onclick="checkConfig()" id="checkBtn">
+      🔍 Check Email Configuration
+    </button>
+    
+    <div class="config-info" id="configInfo" style="display: none;">
+      <h3>Configuration Status</h3>
+      <pre id="configDetails"></pre>
+    </div>
+  </div>
+
+  <script>
+    async function sendTestEmail() {
+      const btn = document.getElementById('sendBtn');
+      const statusDiv = document.getElementById('statusMessage');
+      const emailType = document.getElementById('emailType').value;
+      const emailTo = document.getElementById('emailTo').value;
+      
+      if (!emailTo) {
+        showStatus('Please enter a recipient email address', 'error');
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span> Sending...';
+      statusDiv.style.display = 'none';
+      
+      try {
+        const response = await fetch('/api/test-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: emailType,
+            to: emailTo
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showStatus(`✅ ${data.message}`, 'success');
+        } else {
+          showStatus(`❌ ${data.message}`, 'error');
+        }
+      } catch (error) {
+        showStatus(`❌ Error: ${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '📨 Send Test Email';
+      }
+    }
+    
+    async function checkConfig() {
+      const btn = document.getElementById('checkBtn');
+      const configDiv = document.getElementById('configInfo');
+      const configDetails = document.getElementById('configDetails');
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span> Checking...';
+      
+      try {
+        const response = await fetch('/api/test-email');
+        const data = await response.json();
+        
+        configDetails.textContent = JSON.stringify(data, null, 2);
+        configDiv.style.display = 'block';
+        
+        if (data.configured) {
+          showStatus('✅ Email system is configured and ready!', 'success');
+        } else {
+          showStatus('⚠️ Email system is not configured. Check your .env file.', 'info');
+        }
+      } catch (error) {
+        showStatus(`❌ Error checking configuration: ${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔍 Check Email Configuration';
+      }
+    }
+    
+    function showStatus(message, type) {
+      const statusDiv = document.getElementById('statusMessage');
+      statusDiv.className = `status ${type}`;
+      statusDiv.textContent = message;
+      statusDiv.style.display = 'block';
+      
+      // Auto-hide after 5 seconds for success messages
+      if (type === 'success') {
+        setTimeout(() => {
+          statusDiv.style.display = 'none';
+        }, 5000);
+      }
+    }
+    
+    // Check configuration on page load
+    window.addEventListener('load', checkConfig);
+  </script>
+</body>
+</html>
